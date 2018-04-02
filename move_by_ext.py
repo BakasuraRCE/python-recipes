@@ -43,6 +43,7 @@ __date__ = "26/04/2011"
 __version__ = "0.1"
 
 try:
+    import re
     import sys
     import os
     import shutil
@@ -107,10 +108,10 @@ def find_and_process(args, count=0, log=""):
     for path, directories, files in os.walk(args.src):
         for fil in files:
             # ignore files without extension, can have the same name as the ext
-            file_ext = fil.split('.')[-1] if len(fil.split('.')) > 1 else None
+            file_ext = fil.split('.')[-1].lower() if len(fil.split('.')) > 1 else ''
             # ignore dots in given extensions
-            extensions = [ext.replace('.', '') for ext in args.ext]
-            if file_ext in extensions:
+            extensions = [ext.replace('.', '').lower() for ext in args.ext]
+            if any(re.search(ext, file_ext) for ext in extensions):
                 count += process(path, fil)
 
     opt = int("{0}{1}".format(int(args.rm), int(args.cp)), 2)
